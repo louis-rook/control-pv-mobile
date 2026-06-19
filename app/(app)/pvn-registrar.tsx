@@ -11,7 +11,7 @@ export default function PvnHomeScreen() {
   const [tab, setTab] = useState<'ventas' | 'qr'>('ventas')
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#EBF4FF' }}>
       <AppHeader title={user?.name ?? 'PVN'} subtitle="Punto de Ventas Nacionales" />
       <TabSwitcher
         active={tab}

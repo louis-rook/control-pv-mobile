@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native'
 import { useAuth } from '../context/AuthContext'
+import { COLORS } from '../theme'
 
 export default function AppHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   const { logout } = useAuth()
@@ -14,7 +15,8 @@ export default function AppHeader({ title, subtitle }: { title: string; subtitle
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
+      <Image source={require('../../assets/klarens-logo.png')} style={styles.logo} resizeMode="contain" />
+      <View style={{ flex: 1, marginLeft: 12 }}>
         <Text style={styles.title}>{title}</Text>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
@@ -26,9 +28,10 @@ export default function AppHeader({ title, subtitle }: { title: string; subtitle
 }
 
 const styles = StyleSheet.create({
-  container: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 },
-  title: { fontSize: 20, fontWeight: '800', color: '#0f172a' },
-  subtitle: { fontSize: 13, color: '#64748b', marginTop: 2 },
+  container: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 },
+  logo: { width: 36, height: 36 },
+  title: { fontSize: 17, fontWeight: '800', color: COLORS.text },
+  subtitle: { fontSize: 12, color: COLORS.text2, marginTop: 1 },
   logout: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8, backgroundColor: '#fee2e2' },
-  logoutTexto: { color: '#dc2626', fontWeight: '700', fontSize: 13 },
+  logoutTexto: { color: COLORS.danger, fontWeight: '700', fontSize: 13 },
 })

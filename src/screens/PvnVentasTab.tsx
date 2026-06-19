@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   turnoTextoActivo: { color: '#fff' },
   input: { borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, color: '#0f172a' },
   catTitulo: { fontSize: 12, fontWeight: '800', color: '#0047BA', textTransform: 'uppercase', marginBottom: 10, letterSpacing: 0.5 },
-  fila: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#f8fafc' },
+  fila: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#EBF4FF' },
   prodNombre: { flex: 1, fontSize: 13, color: '#1e293b', marginRight: 10 },
   prodNombreActivo: { fontWeight: '700' },
   contador: { flexDirection: 'row', alignItems: 'center', gap: 8 },

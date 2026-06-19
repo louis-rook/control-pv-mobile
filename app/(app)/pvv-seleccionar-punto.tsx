@@ -24,7 +24,7 @@ export default function SeleccionarPuntoScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#EBF4FF' }}>
       <AppHeader title={user?.name ?? 'PVV'} subtitle="¿En qué punto estás hoy?" />
       {cargando ? (
         <View style={styles.center}><ActivityIndicator color="#0047BA" /></View>

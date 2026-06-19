@@ -19,7 +19,7 @@ export default function PvvPagoQRScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#EBF4FF' }}>
       <AppHeader title={user?.name ?? 'PVV'} subtitle="Pago QR" />
       <PagoQRForm
         puntoVentaId={punto.id}

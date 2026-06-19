@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "pvn-pvv-mobile",
-    "slug": "pvn-pvv-mobile",
+    "slug": "control-pv-mobile",
     "scheme": "pvnpvv",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,7 +21,11 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.klarenssorganization.controlpvmobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,6 +40,13 @@
           "cameraPermission": "Se usa la cámara para fotografiar los comprobantes de pago QR."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "26e47ec8-be2e-43e5-9634-ed58a253417f"
+      }
+    },
+    "owner": "klarenss-organization"
   }
 }

@@ -38,8 +38,8 @@ export default function LoginScreen() {
         <View style={styles.logoCard}>
           <Image source={require('../assets/klarens-logo.png')} style={styles.logo} resizeMode="contain" />
         </View>
-        <Text style={styles.title}>Control de Inventario</Text>
-        <Text style={styles.subtitle}>Planta Valledupar · PVN / PVV</Text>
+        <Text style={styles.title}>Gestión Operativa</Text>
+        <Text style={styles.subtitle}>Control Puntos de Ventas</Text>
 
         <View style={styles.card}>
           {error ? <Text style={styles.error}>⚠️ {error}</Text> : null}

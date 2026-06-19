@@ -20,7 +20,7 @@ export default function AppHeader({ title, subtitle }: { title: string; subtitle
         <Text style={styles.title}>{title}</Text>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
-      <TouchableOpacity onPress={confirmarSalir} style={styles.logout}>
+      <TouchableOpacity onPress={confirmarSalir} style={styles.logout} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
         <Text style={styles.logoutTexto}>Salir</Text>
       </TouchableOpacity>
     </View>
@@ -28,10 +28,10 @@ export default function AppHeader({ title, subtitle }: { title: string; subtitle
 }
 
 const styles = StyleSheet.create({
-  container: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 },
+  container: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 18 },
   logo: { width: 36, height: 36 },
   title: { fontSize: 17, fontWeight: '800', color: COLORS.text },
   subtitle: { fontSize: 12, color: COLORS.text2, marginTop: 1 },
-  logout: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8, backgroundColor: '#fee2e2' },
+  logout: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 8, backgroundColor: '#fee2e2' },
   logoutTexto: { color: COLORS.danger, fontWeight: '700', fontSize: 13 },
 })

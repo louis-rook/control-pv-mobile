@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { View, SafeAreaView } from 'react-native'
+import { View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuth } from '../../src/context/AuthContext'
 import AppHeader from '../../src/components/AppHeader'
 import TabSwitcher from '../../src/components/TabSwitcher'

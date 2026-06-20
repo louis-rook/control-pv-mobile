@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "pvn-pvv-mobile",
+    "name": "Control PV",
     "slug": "control-pv-mobile",
     "scheme": "pvnpvv",
     "version": "1.0.0",

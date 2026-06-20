@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { postPagoQR } from '../api/qr'
 import { ApiError } from '../api/client'
 import FotoComprobante from '../components/FotoComprobante'
+import MisPagosHoyModal from '../components/MisPagosHoyModal'
 
 type Props = {
   puntoVentaId?: number | null
@@ -18,6 +19,7 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
   const [guardando, setGuardando] = useState(false)
   const [error, setError]     = useState('')
   const [exito, setExito]     = useState('')
+  const [mostrarHoy, setMostrarHoy] = useState(false)
 
   async function enviar() {
     if (!token) return
@@ -56,6 +58,12 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
         </View>
       )}
 
+      <TouchableOpacity onPress={() => setMostrarHoy(true)} style={styles.verHoyBtn}>
+        <Text style={styles.verHoyTexto}>📋 Mis pagos de hoy · Cerrar día</Text>
+      </TouchableOpacity>
+
+      <MisPagosHoyModal visible={mostrarHoy} onClose={() => setMostrarHoy(false)} />
+
       {exito ? <Text style={styles.exito}>{exito}</Text> : null}
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
@@ -89,6 +97,8 @@ const styles = StyleSheet.create({
   puntoNombre: { fontSize: 15, fontWeight: '800', color: '#1d4ed8', marginTop: 2 },
   cambiarBtn: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#fff' },
   cambiarTexto: { color: '#1d4ed8', fontWeight: '700', fontSize: 12 },
+  verHoyBtn: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 10, paddingVertical: 12, alignItems: 'center', marginBottom: 16 },
+  verHoyTexto: { color: '#0047BA', fontWeight: '700', fontSize: 13 },
   exito: { backgroundColor: '#d1fae5', color: '#065f46', padding: 12, borderRadius: 10, marginBottom: 12, fontSize: 13, fontWeight: '600' },
   error: { backgroundColor: '#fee2e2', color: '#991b1b', padding: 12, borderRadius: 10, marginBottom: 12, fontSize: 13 },
   card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 14, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 },

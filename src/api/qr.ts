@@ -6,6 +6,17 @@ export type PagoQR = {
   valor: number
   foto_url: string
   created_at: string
+  punto_venta_nombre?: string | null
+}
+
+export type CierreDia = { ok: boolean; fecha: string; total_pagos: number; total_valor: number }
+
+export async function getMisPagosHoy(token: string) {
+  return apiFetch<PagoQR[]>('/api/qr/pagos', { token })
+}
+
+export async function postCierreDia(token: string) {
+  return apiFetch<CierreDia>('/api/qr/cierre-dia', { method: 'POST', token })
 }
 
 export async function postPagoQR(token: string, params: {

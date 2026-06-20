@@ -121,7 +121,13 @@ export default function PvnVentasTab() {
                   <TouchableOpacity onPress={() => setQty(p.id, qty - 1)} style={styles.contBtn}>
                     <Text style={styles.contBtnTexto}>−</Text>
                   </TouchableOpacity>
-                  <Text style={styles.contValor}>{qty}</Text>
+                  <TextInput
+                    value={String(qty)}
+                    onChangeText={v => setQty(p.id, parseInt(v.replace(/[^0-9]/g, '')) || 0)}
+                    keyboardType="numeric"
+                    selectTextOnFocus
+                    style={styles.contInput}
+                  />
                   <TouchableOpacity onPress={() => setQty(p.id, qty + 1)} style={[styles.contBtn, styles.contBtnMas]}>
                     <Text style={[styles.contBtnTexto, { color: '#fff' }]}>+</Text>
                   </TouchableOpacity>
@@ -171,6 +177,7 @@ const styles = StyleSheet.create({
   contBtnMas: { backgroundColor: '#0047BA' },
   contBtnTexto: { fontSize: 16, fontWeight: '700', color: '#475569' },
   contValor: { minWidth: 24, textAlign: 'center', fontSize: 15, fontWeight: '700', color: '#0f172a' },
+  contInput: { minWidth: 40, textAlign: 'center', fontSize: 15, fontWeight: '700', color: '#0f172a', padding: 0, borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 6, paddingVertical: 4 },
   resumen: { backgroundColor: '#fff', borderRadius: 12, padding: 14, marginBottom: 14 },
   resumenTexto: { fontSize: 13, color: '#64748b' },
   resumenValor: { fontWeight: '800', color: '#0f172a', fontSize: 15 },

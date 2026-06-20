@@ -7,3 +7,11 @@ export async function loginMobile(username: string, password: string) {
     body: { username, password },
   })
 }
+
+export async function cambiarPassword(token: string, nuevaPassword: string) {
+  return apiFetch<{ ok: true }>('/api/cambiar-password', {
+    method: 'PUT',
+    token,
+    body: { nueva_password: nuevaPassword },
+  })
+}

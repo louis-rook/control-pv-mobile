@@ -9,6 +9,7 @@ type AuthState = {
   error: string | null
   login: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  markPasswordChanged: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -51,8 +52,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }, [])
 
+  const markPasswordChanged = useCallback(async () => {
+    if (!token || !user) return
+    const updated = { ...user, debe_cambiar_password: false }
+    await saveSession(token, updated)
+    setUser(updated)
+  }, [token, user])
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, error, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, error, login, logout, markPasswordChanged }}>
       {children}
     </AuthContext.Provider>
   )

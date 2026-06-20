@@ -16,6 +16,7 @@ export default function Index() {
   }
 
   if (!user) return <Redirect href="/login" />
+  if (user.debe_cambiar_password) return <Redirect href="/cambiar-password" />
   if (user.rol === 'pvn') return <Redirect href="/(app)/pvn-registrar" />
   if (user.rol === 'pvv') return <Redirect href="/(app)/pvv-seleccionar-punto" />
   return <Redirect href="/login" />

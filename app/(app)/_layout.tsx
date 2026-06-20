@@ -16,6 +16,7 @@ export default function AppLayout() {
   }
 
   if (!user) return <Redirect href="/login" />
+  if (user.debe_cambiar_password) return <Redirect href="/cambiar-password" />
 
   return <Stack screenOptions={{ headerShown: false }} />
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuth } from '../context/AuthContext'
 import { getMisPagosHoy, postCierreDia, type PagoQR } from '../api/qr'
 import { COLORS } from '../theme'
@@ -52,7 +53,7 @@ export default function MisPagosHoyModal({ visible, onClose }: { visible: boolea
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <View style={styles.header}>
           <Text style={styles.titulo}>Mis pagos de hoy</Text>
           <TouchableOpacity onPress={onClose} style={styles.cerrarBtn}>
@@ -101,13 +102,13 @@ export default function MisPagosHoyModal({ visible, onClose }: { visible: boolea
             </View>
           </>
         )}
-      </View>
+      </SafeAreaView>
     </Modal>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.bg, paddingTop: 50 },
+  container: { flex: 1, backgroundColor: COLORS.bg, paddingTop: 10 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 16 },
   titulo: { fontSize: 19, fontWeight: '800', color: COLORS.text },
   cerrarBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },

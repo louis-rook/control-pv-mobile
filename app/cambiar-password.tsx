@@ -37,8 +37,8 @@ export default function CambiarPasswordScreen() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}>
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <Text style={styles.icono}>🔒</Text>
         <Text style={styles.title}>Cambia tu contraseña</Text>
         <Text style={styles.subtitle}>Por seguridad, debes establecer una contraseña propia antes de continuar.</Text>

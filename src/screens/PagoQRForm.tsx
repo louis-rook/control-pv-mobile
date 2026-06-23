@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
 import { useAuth } from '../context/AuthContext'
 import { postPagoQR } from '../api/qr'
 import { ApiError } from '../api/client'
@@ -43,7 +43,8 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
   }
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 40 }}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}>
+    <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
       {puntoNombre && (
         <View style={styles.puntoBox}>
           <View>
@@ -87,6 +88,7 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
         <Text style={styles.guardarTexto}>{guardando ? 'Guardando...' : 'Registrar pago'}</Text>
       </TouchableOpacity>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
 import { useAuth } from '../context/AuthContext'
 import { getProductos, postRegistroVentas, type Producto } from '../api/pvn'
 import { ApiError } from '../api/client'
@@ -86,7 +86,8 @@ export default function PvnVentasTab() {
   }
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 40 }}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}>
+    <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
       <View style={styles.fechaBox}>
         <Text style={styles.fechaTexto}>📅 {hoyBogota()} (hoy · Colombia)</Text>
       </View>
@@ -150,6 +151,7 @@ export default function PvnVentasTab() {
         <Text style={styles.guardarTexto}>{guardando ? 'Guardando...' : `Guardar — ${turno}`}</Text>
       </TouchableOpacity>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 

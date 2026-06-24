@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { Keyboard, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native'
 import { useAuth } from '../context/AuthContext'
 import { postPagoQR } from '../api/qr'
 import { ApiError } from '../api/client'
@@ -14,6 +14,18 @@ type Props = {
 
 export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }: Props) {
   const { token } = useAuth()
+  const scrollRef = useRef<ScrollView>(null)
+  const [kbHeight, setKbHeight] = useState(0)
+
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', e => {
+      setKbHeight(e.endCoordinates.height)
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50)
+    })
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKbHeight(0))
+    return () => { show.remove(); hide.remove() }
+  }, [])
+
   const [foto, setFoto]       = useState<string | null>(null)
   const [valor, setValor]     = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -43,8 +55,12 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}>
-    <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      ref={scrollRef}
+      style={styles.scroll}
+      contentContainerStyle={{ paddingBottom: kbHeight + 24 }}
+      keyboardShouldPersistTaps="handled"
+    >
       {puntoNombre && (
         <View style={styles.puntoBox}>
           <View>
@@ -88,7 +104,6 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
         <Text style={styles.guardarTexto}>{guardando ? 'Guardando...' : 'Registrar pago'}</Text>
       </TouchableOpacity>
     </ScrollView>
-    </KeyboardAvoidingView>
   )
 }
 

@@ -9,10 +9,10 @@ import MisPagosHoyModal from '../components/MisPagosHoyModal'
 type Props = {
   puntoVentaId?: number | null
   puntoNombre?: string | null
-  onCambiarPunto?: () => void
+  onTurnoCerrado?: () => void
 }
 
-export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }: Props) {
+export default function PagoQRForm({ puntoVentaId, puntoNombre, onTurnoCerrado }: Props) {
   const { token } = useAuth()
   const scrollRef = useRef<ScrollView>(null)
   const [kbHeight, setKbHeight] = useState(0)
@@ -67,11 +67,6 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
             <Text style={styles.puntoLabel}>Punto de venta</Text>
             <Text style={styles.puntoNombre}>{puntoNombre}</Text>
           </View>
-          {onCambiarPunto && (
-            <TouchableOpacity onPress={onCambiarPunto} style={styles.cambiarBtn}>
-              <Text style={styles.cambiarTexto}>Cambiar</Text>
-            </TouchableOpacity>
-          )}
         </View>
       )}
 
@@ -79,7 +74,7 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onCambiarPunto }
         <Text style={styles.verHoyTexto}>📋 Mis pagos de hoy · Cerrar día</Text>
       </TouchableOpacity>
 
-      <MisPagosHoyModal visible={mostrarHoy} onClose={() => setMostrarHoy(false)} />
+      <MisPagosHoyModal visible={mostrarHoy} onClose={() => setMostrarHoy(false)} onCerrado={onTurnoCerrado} />
 
       {exito ? <Text style={styles.exito}>{exito}</Text> : null}
       {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -112,8 +107,6 @@ const styles = StyleSheet.create({
   puntoBox: { backgroundColor: '#eff6ff', borderRadius: 10, padding: 14, marginBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   puntoLabel: { fontSize: 11, color: '#3b82f6', fontWeight: '600' },
   puntoNombre: { fontSize: 15, fontWeight: '800', color: '#1d4ed8', marginTop: 2 },
-  cambiarBtn: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#fff' },
-  cambiarTexto: { color: '#1d4ed8', fontWeight: '700', fontSize: 12 },
   verHoyBtn: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 10, paddingVertical: 12, alignItems: 'center', marginBottom: 16 },
   verHoyTexto: { color: '#0047BA', fontWeight: '700', fontSize: 13 },
   exito: { backgroundColor: '#d1fae5', color: '#065f46', padding: 12, borderRadius: 10, marginBottom: 12, fontSize: 13, fontWeight: '600' },

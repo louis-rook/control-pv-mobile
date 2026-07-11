@@ -9,6 +9,7 @@ export type StoredUser = {
   rol: 'pvn' | 'pvv'
   area: string
   punto_venta_id: number | null
+  punto_venta_nombre: string | null
   debe_cambiar_password: boolean
 }
 

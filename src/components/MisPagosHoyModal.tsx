@@ -12,7 +12,16 @@ function fmtHora(s: string) {
   return new Date(s).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
 }
 
-export default function MisPagosHoyModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+type Props = {
+  visible: boolean
+  onClose: () => void
+  // Al cerrar el panel después de confirmar el cierre, avisa al padre para
+  // que muestre la pantalla de "turno cerrado" (o, en rotativas, vuelva a
+  // pedir el punto de venta).
+  onCerrado?: () => void
+}
+
+export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props) {
   const { token } = useAuth()
   const [pagos, setPagos]     = useState<PagoQR[]>([])
   const [cargando, setCargando] = useState(true)
@@ -51,12 +60,17 @@ export default function MisPagosHoyModal({ visible, onClose }: { visible: boolea
     )
   }
 
+  function cerrarPanel() {
+    onClose()
+    if (cerrado) onCerrado?.()
+  }
+
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" onRequestClose={cerrarPanel}>
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <View style={styles.header}>
           <Text style={styles.titulo}>Mis pagos de hoy</Text>
-          <TouchableOpacity onPress={onClose} style={styles.cerrarBtn}>
+          <TouchableOpacity onPress={cerrarPanel} style={styles.cerrarBtn}>
             <Text style={styles.cerrarTexto}>×</Text>
           </TouchableOpacity>
         </View>

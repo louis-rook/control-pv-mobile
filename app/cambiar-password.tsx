@@ -16,7 +16,7 @@ export default function CambiarPasswordScreen() {
 
   if (!user || !token) return <Redirect href="/login" />
   if (!user.debe_cambiar_password) {
-    return <Redirect href={user.rol === 'pvn' ? '/(app)/pvn-registrar' : '/(app)/pvv-seleccionar-punto'} />
+    return <Redirect href={user.rol === 'pvn' ? '/(app)/pvn-registrar' : '/(app)/pvv-pago-qr'} />
   }
 
   async function onSubmit() {
@@ -28,7 +28,7 @@ export default function CambiarPasswordScreen() {
     try {
       await cambiarPassword(token!, nueva)
       await markPasswordChanged()
-      router.replace(user!.rol === 'pvn' ? '/(app)/pvn-registrar' : '/(app)/pvv-seleccionar-punto')
+      router.replace(user!.rol === 'pvn' ? '/(app)/pvn-registrar' : '/(app)/pvv-pago-qr')
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'Error al cambiar la contraseña')
     } finally {

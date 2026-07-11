@@ -14,7 +14,7 @@ export default function LoginScreen() {
   if (user) {
     if (user.debe_cambiar_password) return <Redirect href="/cambiar-password" />
     if (user.rol === 'pvn') return <Redirect href="/(app)/pvn-registrar" />
-    if (user.rol === 'pvv') return <Redirect href="/(app)/pvv-seleccionar-punto" />
+    if (user.rol === 'pvv') return <Redirect href="/(app)/pvv-pago-qr" />
   }
 
   async function onSubmit() {

@@ -43,10 +43,6 @@ export default function SeleccionarPuntoScreen() {
           ListEmptyComponent={<Text style={styles.vacio}>No hay puntos configurados</Text>}
         />
       )}
-      {/* DEBUG temporal — quitar después de diagnosticar */}
-      <Text style={styles.debug} selectable>
-        DEBUG {JSON.stringify(user)}
-      </Text>
     </SafeAreaView>
   )
 }
@@ -57,5 +53,4 @@ const styles = StyleSheet.create({
   itemTexto: { fontSize: 15, fontWeight: '700', color: '#0f172a' },
   itemFlecha: { fontSize: 20, color: '#94a3b8' },
   vacio: { textAlign: 'center', color: '#94a3b8', marginTop: 40 },
-  debug: { fontSize: 10, color: '#ef4444', padding: 12, backgroundColor: '#fff', margin: 12, borderRadius: 8 },
 })

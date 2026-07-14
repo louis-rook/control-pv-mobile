@@ -232,11 +232,11 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
                         autoFocus
                         style={styles.inputEdit}
                       />
-                      <TouchableOpacity onPress={() => guardarEdicion(item.id)} disabled={guardandoEdit} style={styles.iconBtn}>
-                        <Text style={styles.iconBtnTexto}>✓</Text>
+                      <TouchableOpacity onPress={() => guardarEdicion(item.id)} disabled={guardandoEdit} style={[styles.iconBtn, styles.iconBtnConfirmar, guardandoEdit && { opacity: 0.6 }]}>
+                        <Text style={[styles.iconBtnTexto, styles.iconBtnConfirmarTexto]}>✓</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => setEditandoId(null)} style={styles.iconBtn}>
-                        <Text style={styles.iconBtnTexto}>×</Text>
+                      <TouchableOpacity onPress={() => setEditandoId(null)} style={[styles.iconBtn, styles.iconBtnCancelar]}>
+                        <Text style={[styles.iconBtnTexto, styles.iconBtnCancelarTexto]}>×</Text>
                       </TouchableOpacity>
                     </>
                   ) : (
@@ -309,6 +309,10 @@ const styles = StyleSheet.create({
   inputEdit: { width: 80, borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4, fontSize: 14, fontWeight: '700', color: COLORS.text },
   iconBtn: { width: 28, height: 28, borderRadius: 6, backgroundColor: '#f1f5f9', alignItems: 'center', justifyContent: 'center' },
   iconBtnTexto: { fontSize: 13 },
+  iconBtnConfirmar: { backgroundColor: '#dcfce7' },
+  iconBtnConfirmarTexto: { color: '#16a34a', fontWeight: '800' },
+  iconBtnCancelar: { backgroundColor: '#fee2e2' },
+  iconBtnCancelarTexto: { color: '#dc2626', fontWeight: '800' },
   footer: { padding: 20, borderTopWidth: 1, borderTopColor: COLORS.border },
   cierreBtn: { backgroundColor: COLORS.danger, borderRadius: 10, paddingVertical: 15, alignItems: 'center' },
   cierreBtnDisabled: { opacity: 0.5 },

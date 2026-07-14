@@ -9,7 +9,7 @@ export class ApiError extends Error {
 }
 
 type FetchOpts = {
-  method?: 'GET' | 'POST' | 'PUT'
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
   token?: string | null
   body?: unknown
   formData?: FormData

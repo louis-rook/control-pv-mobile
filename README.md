@@ -3,7 +3,7 @@
 App Expo (React Native + TypeScript) para los roles `pvn` (Puntos de Venta Nacionales) y `pvv` (cajeras de los puntos principales) del sistema de inventario.
 
 - **pvn**: registra ventas diarias por turno y sube comprobantes de pago QR (su punto de venta es fijo, asignado por el admin).
-- **pvv**: selecciona su punto de venta al iniciar sesión (Sede Principal, Mayales, Éxito Flores, Natividad o Provincia) y sube comprobantes de pago QR.
+- **pvv**: si tiene un punto de venta fijo asignado, abre turno directo ahí; si es rotativa (sin punto fijo), elige el punto al abrir turno. El turno (abrir/cerrar) es el mismo estado real que usa la web (tabla `pvn_turnos`), consistente entre plataformas.
 
 Consume la misma API del backend Next.js (`inventory-app`) vía un JWT propio emitido por `POST /api/auth/mobile/login`.
 
@@ -33,12 +33,11 @@ app/                      # rutas (expo-router)
   login.tsx
   (app)/
     pvn-registrar.tsx      # rol pvn: ventas + pago QR (pestañas)
-    pvv-seleccionar-punto.tsx
     pvv-pago-qr.tsx
 src/
-  context/                 # AuthContext (sesión), PvvSessionContext (punto en memoria)
-  api/                      # cliente fetch + wrappers por dominio
-  components/               # FotoComprobante, AppHeader, TabSwitcher
-  screens/                   # contenido de pantallas reutilizado entre pvn/pvv
+  context/                 # AuthContext (sesión)
+  api/                      # cliente fetch + wrappers por dominio (incluye turno.ts)
+  components/               # FotoComprobante, AppHeader, TabSwitcher, avisos de turno
+  screens/                   # TurnoQRTab (turno + PagoQRForm), PvnVentasTab
   storage/                    # SecureStore (token + usuario)
 ```

@@ -9,14 +9,17 @@ export type PagoQR = {
   punto_venta_nombre?: string | null
 }
 
-export type CierreDia = { ok: boolean; fecha: string; total_pagos: number; total_valor: number }
-
-export async function getMisPagosHoy(token: string) {
-  return apiFetch<PagoQR[]>('/api/qr/pagos', { token })
+export async function getMisPagosHoy(token: string, turnoId?: number) {
+  const qs = turnoId ? `?turno_id=${turnoId}` : ''
+  return apiFetch<PagoQR[]>(`/api/qr/pagos${qs}`, { token })
 }
 
-export async function postCierreDia(token: string) {
-  return apiFetch<CierreDia>('/api/qr/cierre-dia', { method: 'POST', token })
+export async function putPagoQR(token: string, id: number, valor: number) {
+  return apiFetch<{ ok: true }>(`/api/qr/pagos/${id}`, { method: 'PUT', token, body: { valor } })
+}
+
+export async function deletePagoQR(token: string, id: number) {
+  return apiFetch<{ ok: true }>(`/api/qr/pagos/${id}`, { method: 'DELETE', token })
 }
 
 export async function postPagoQR(token: string, params: {

@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import * as SplashScreen from 'expo-splash-screen'
 import { AuthProvider, useAuth } from '../src/context/AuthContext'
-import { PvvSessionProvider } from '../src/context/PvvSessionContext'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -27,9 +26,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <PvvSessionProvider>
-          <AppContent />
-        </PvvSessionProvider>
+        <AppContent />
       </AuthProvider>
     </SafeAreaProvider>
   )

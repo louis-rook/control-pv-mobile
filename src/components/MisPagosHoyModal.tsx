@@ -140,6 +140,9 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
   }
 
   const turnoActual = turnosHist.find(t => t.id === verTurnoId)
+  // El proxy de fotos exige Bearer token; <Image> no lo manda solo como el
+  // navegador manda la cookie de sesión, hay que pasarlo a mano en headers.
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : undefined
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={cerrarPanel}>
@@ -217,7 +220,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
               renderItem={({ item }) => (
                 <View style={styles.fila}>
                   <TouchableOpacity onPress={() => setLightbox(item.foto_url)}>
-                    <Image source={{ uri: item.foto_url }} style={styles.filaFoto} />
+                    <Image source={{ uri: item.foto_url, headers: authHeaders }} style={styles.filaFoto} />
                   </TouchableOpacity>
                   <Text style={styles.filaHora}>{fmtHora(item.created_at)}</Text>
                   <View style={{ flex: 1 }} />
@@ -276,7 +279,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
 
         <Modal visible={!!lightbox} animationType="fade" transparent onRequestClose={() => setLightbox(null)}>
           <TouchableOpacity style={styles.lightboxFondo} activeOpacity={1} onPress={() => setLightbox(null)}>
-            {lightbox && <Image source={{ uri: lightbox }} style={styles.lightboxImagen} resizeMode="contain" />}
+            {lightbox && <Image source={{ uri: lightbox, headers: authHeaders }} style={styles.lightboxImagen} resizeMode="contain" />}
           </TouchableOpacity>
         </Modal>
       </SafeAreaView>

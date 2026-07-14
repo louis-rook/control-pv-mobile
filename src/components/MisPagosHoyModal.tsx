@@ -261,7 +261,11 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
                     <Text style={styles.cerradoTexto}>✅ Día cerrado correctamente</Text>
                   </View>
                 ) : (
-                  <TouchableOpacity onPress={confirmarCierre} disabled={cerrando || pagos.length === 0} style={[styles.cierreBtn, (cerrando || pagos.length === 0) && styles.cierreBtnDisabled]}>
+                  <TouchableOpacity
+                    onPress={confirmarCierre}
+                    disabled={cerrando || pagos.length === 0 || editandoId !== null}
+                    style={[styles.cierreBtn, (cerrando || pagos.length === 0 || editandoId !== null) && styles.cierreBtnDisabled]}
+                  >
                     <Text style={styles.cierreTexto}>{cerrando ? 'Cerrando...' : 'Cerrar día'}</Text>
                   </TouchableOpacity>
                 )}

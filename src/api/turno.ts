@@ -35,7 +35,29 @@ export async function postAbrirTurno(token: string, puntoVentaId?: number) {
   })
 }
 
-export async function postCerrarTurno(token: string, turnoId?: number) {
+export async function postCerrarTurno(
+  token: string,
+  turnoId?: number,
+  datafono?: { fotoUri: string; numeroRecogida: string }
+) {
+  if (datafono) {
+    const filename = datafono.fotoUri.split('/').pop() ?? 'datafono.jpg'
+    const match = /\.(\w+)$/.exec(filename)
+    const ext = match ? match[1] : 'jpg'
+
+    const form = new FormData()
+    form.append('accion', 'cerrar')
+    if (turnoId) form.append('turno_id', String(turnoId))
+    form.append('numero_recogida', datafono.numeroRecogida)
+    // React Native FormData acepta este shape de objeto para archivos
+    form.append('foto_datafono', {
+      uri: datafono.fotoUri,
+      name: filename,
+      type: `image/${ext === 'jpg' ? 'jpeg' : ext}`,
+    } as unknown as Blob)
+    return apiFetch<CierreTurno>('/api/qr/turno', { method: 'POST', token, formData: form })
+  }
+
   return apiFetch<CierreTurno>('/api/qr/turno', {
     method: 'POST',
     token,

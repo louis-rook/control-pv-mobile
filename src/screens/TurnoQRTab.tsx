@@ -6,6 +6,7 @@ import { getPuntosVenta, type PuntoVenta } from '../api/pvn'
 import { ApiError } from '../api/client'
 import AbrirTurnoAviso from '../components/AbrirTurnoAviso'
 import TurnoPendienteAviso from '../components/TurnoPendienteAviso'
+import CierreDatafonoModal from '../components/CierreDatafonoModal'
 import PagoQRForm from './PagoQRForm'
 
 export default function TurnoQRTab() {
@@ -20,6 +21,8 @@ export default function TurnoQRTab() {
   const [abriendo, setAbriendo]           = useState(false)
   const [cerrandoPendiente, setCerrandoPendiente] = useState(false)
   const [error, setError]                 = useState('')
+  const [mostrarDatafonoPendiente, setMostrarDatafonoPendiente] = useState(false)
+  const [errorDatafonoPendiente, setErrorDatafonoPendiente]     = useState('')
 
   const cargarTurno = useCallback(() => {
     if (!token) return
@@ -50,7 +53,19 @@ export default function TurnoQRTab() {
     }
   }
 
-  async function cerrarPendiente(turnoId: number) {
+  // PVV (fijo o rotativo) debe adjuntar la foto de cierre del datafono + el
+  // número de recogida del cuadre de caja antes de poder cerrar; PVN cierra
+  // directo sin ese paso.
+  function cerrarPendiente(turnoId: number) {
+    if (user?.rol === 'pvv') {
+      setErrorDatafonoPendiente('')
+      setMostrarDatafonoPendiente(true)
+      return
+    }
+    cerrarPendienteSimple(turnoId)
+  }
+
+  async function cerrarPendienteSimple(turnoId: number) {
     if (!token) return
     setCerrandoPendiente(true)
     try {
@@ -61,12 +76,38 @@ export default function TurnoQRTab() {
     }
   }
 
+  async function cerrarPendienteConDatafono(fotoUri: string, numeroRecogida: string) {
+    if (!token || !turnoPendiente) return
+    setCerrandoPendiente(true)
+    setErrorDatafonoPendiente('')
+    try {
+      await postCerrarTurno(token, turnoPendiente.id, { fotoUri, numeroRecogida })
+      setTurnoPendiente(null)
+      setMostrarDatafonoPendiente(false)
+    } catch (e) {
+      setErrorDatafonoPendiente(e instanceof ApiError ? e.message : 'Error al cerrar turno')
+    } finally {
+      setCerrandoPendiente(false)
+    }
+  }
+
   if (turnoHoy === undefined) {
     return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color="#0047BA" /></View>
   }
 
   if (turnoPendiente && !turnoHoy) {
-    return <TurnoPendienteAviso turno={turnoPendiente} onCerrar={() => cerrarPendiente(turnoPendiente.id)} cerrando={cerrandoPendiente} />
+    return (
+      <>
+        <TurnoPendienteAviso turno={turnoPendiente} onCerrar={() => cerrarPendiente(turnoPendiente.id)} cerrando={cerrandoPendiente} />
+        <CierreDatafonoModal
+          visible={mostrarDatafonoPendiente}
+          cerrando={cerrandoPendiente}
+          error={errorDatafonoPendiente}
+          onCancelar={() => setMostrarDatafonoPendiente(false)}
+          onConfirmar={cerrarPendienteConDatafono}
+        />
+      </>
+    )
   }
 
   if (!turnoHoy) {

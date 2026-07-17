@@ -6,6 +6,7 @@ import * as ImageManipulator from 'expo-image-manipulator'
 type Props = {
   uri: string | null
   onChange: (uri: string | null) => void
+  placeholderTexto?: string
 }
 
 async function comprimir(uri: string): Promise<string> {
@@ -17,7 +18,7 @@ async function comprimir(uri: string): Promise<string> {
   return result.uri
 }
 
-export default function FotoComprobante({ uri, onChange }: Props) {
+export default function FotoComprobante({ uri, onChange, placeholderTexto = 'Sin foto del comprobante' }: Props) {
   async function tomarFoto() {
     const perm = await ImagePicker.requestCameraPermissionsAsync()
     if (!perm.granted) {
@@ -55,7 +56,7 @@ export default function FotoComprobante({ uri, onChange }: Props) {
         </View>
       ) : (
         <View style={styles.placeholder}>
-          <Text style={styles.placeholderTexto}>Sin foto del comprobante</Text>
+          <Text style={styles.placeholderTexto}>{placeholderTexto}</Text>
         </View>
       )}
       <View style={styles.botones}>

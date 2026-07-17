@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuth } from '../context/AuthContext'
 import { getMisPagosHoy, putPagoQR, deletePagoQR, type PagoQR } from '../api/qr'
 import { postCerrarTurno, getTurnosHistorialHoy, type TurnoHist } from '../api/turno'
+import { ApiError } from '../api/client'
+import CierreDatafonoModal from './CierreDatafonoModal'
 import { COLORS } from '../theme'
 
 function fmtMoneda(v: number) {
@@ -23,11 +25,13 @@ type Props = {
 }
 
 export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props) {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const [pagos, setPagos]     = useState<PagoQR[]>([])
   const [cargando, setCargando] = useState(true)
   const [cerrando, setCerrando] = useState(false)
   const [cerrado, setCerrado] = useState(false)
+  const [mostrarDatafono, setMostrarDatafono] = useState(false)
+  const [errorDatafono, setErrorDatafono] = useState('')
   const [lightbox, setLightbox] = useState<string | null>(null)
   const [editandoId, setEditandoId] = useState<number | null>(null)
   const [valorEdit, setValorEdit] = useState('')
@@ -72,8 +76,16 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
     cargarPagos(t.id)
   }
 
-  async function confirmarCierre() {
+  // PVV (fijo o rotativo) debe adjuntar la foto de cierre del datafono + el
+  // número de recogida del cuadre de caja antes de poder cerrar; PVN cierra
+  // directo con la confirmación simple de siempre.
+  function confirmarCierre() {
     if (!token) return
+    if (user?.rol === 'pvv') {
+      setErrorDatafono('')
+      setMostrarDatafono(true)
+      return
+    }
     Alert.alert(
       'Cerrar día',
       `Confirmas el cierre de turno con ${pagos.length} pago(s) por un total de ${fmtMoneda(total)}?`,
@@ -93,6 +105,21 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
         },
       ]
     )
+  }
+
+  async function confirmarCierreConDatafono(fotoUri: string, numeroRecogida: string) {
+    if (!token) return
+    setCerrando(true)
+    setErrorDatafono('')
+    try {
+      await postCerrarTurno(token, undefined, { fotoUri, numeroRecogida })
+      setCerrado(true)
+      setMostrarDatafono(false)
+    } catch (e) {
+      setErrorDatafono(e instanceof ApiError ? e.message : 'Error al cerrar turno')
+    } finally {
+      setCerrando(false)
+    }
   }
 
   function iniciarEdicion(p: PagoQR) {
@@ -282,6 +309,14 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
             {lightbox && <Image source={{ uri: lightbox, headers: authHeaders }} style={styles.lightboxImagen} resizeMode="contain" />}
           </TouchableOpacity>
         </Modal>
+
+        <CierreDatafonoModal
+          visible={mostrarDatafono}
+          cerrando={cerrando}
+          error={errorDatafono}
+          onCancelar={() => setMostrarDatafono(false)}
+          onConfirmar={confirmarCierreConDatafono}
+        />
       </SafeAreaView>
     </Modal>
   )

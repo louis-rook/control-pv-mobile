@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Keyboard, BackHandler, useWindowDimensions } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import FotoComprobante from './FotoComprobante'
 
 type Props = {
@@ -10,10 +11,46 @@ type Props = {
   onConfirmar: (fotoUri: string, numeroRecogida: string) => void
 }
 
+// No se usa el <Modal> nativo de RN a propósito: este componente se abre desde
+// dentro de MisPagosHoyModal, que ya es un <Modal>. Un Modal anidado dentro de
+// otro Modal abre su propia ventana de Android y no respeta adjustResize, así
+// que el teclado tapa el contenido sin importar cuánto se calcule en JS. Como
+// overlay normal dentro del árbol de pantalla, sí hereda el comportamiento de
+// teclado del resto de la app (ver PagoQRForm.tsx).
 export default function CierreDatafonoModal({ visible, cerrando, error, onCancelar, onConfirmar }: Props) {
   const [foto, setFoto] = useState<string | null>(null)
   const [numero, setNumero] = useState('')
   const [errorLocal, setErrorLocal] = useState('')
+  const [kbHeight, setKbHeight] = useState(0)
+  const scrollRef = useRef<ScrollView>(null)
+  const { height: screenHeight } = useWindowDimensions()
+  const insets = useSafeAreaInsets()
+
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', e => {
+      setKbHeight(e.endCoordinates.height)
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50)
+    })
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKbHeight(0))
+    return () => { show.remove(); hide.remove() }
+  }, [])
+
+  // Limpia el formulario cada vez que se vuelve a abrir, para no arrastrar
+  // la foto/número de un cierre anterior (el componente nunca se desmonta).
+  useEffect(() => {
+    if (visible) { setFoto(null); setNumero(''); setErrorLocal('') }
+  }, [visible])
+
+  useEffect(() => {
+    if (!visible) return
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      onCancelar()
+      return true
+    })
+    return () => sub.remove()
+  }, [visible, onCancelar])
+
+  if (!visible) return null
 
   function confirmar() {
     setErrorLocal('')
@@ -23,9 +60,22 @@ export default function CierreDatafonoModal({ visible, cerrando, error, onCancel
   }
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onCancelar}>
-      <View style={styles.fondo}>
-        <View style={styles.card}>
+    <View style={styles.fondo}>
+      <View
+        style={[
+          styles.card,
+          {
+            paddingBottom: insets.bottom + 16,
+            marginBottom: kbHeight,
+            maxHeight: (kbHeight > 0 ? screenHeight - kbHeight : screenHeight * 0.85) - insets.bottom - insets.top,
+          },
+        ]}
+      >
+        <ScrollView
+          ref={scrollRef}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: 30 }}
+        >
           <Text style={styles.titulo}>Cierre de turno</Text>
           <Text style={styles.subtitulo}>
             Adjunta la foto del cierre del datafono y el número de recogida del cuadre de caja para poder cerrar.
@@ -43,6 +93,7 @@ export default function CierreDatafonoModal({ visible, cerrando, error, onCancel
             keyboardType="numeric"
             placeholder="Ej: 123456"
             style={styles.input}
+            onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100)}
           />
 
           <View style={styles.botones}>
@@ -53,15 +104,19 @@ export default function CierreDatafonoModal({ visible, cerrando, error, onCancel
               <Text style={styles.btnConfirmarTexto}>{cerrando ? 'Cerrando...' : 'Confirmar cierre'}</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </View>
-    </Modal>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  fondo: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  card: { backgroundColor: '#f1f5f9', borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20, paddingBottom: 30 },
+  fondo: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end',
+    zIndex: 1000, elevation: 1000,
+  },
+  card: { backgroundColor: '#f1f5f9', borderTopLeftRadius: 16, borderTopRightRadius: 16, paddingHorizontal: 20, paddingTop: 20 },
   titulo: { fontSize: 18, fontWeight: '800', color: '#0f172a', marginBottom: 4 },
   subtitulo: { fontSize: 12, color: '#64748b', marginBottom: 14 },
   error: { backgroundColor: '#fee2e2', color: '#991b1b', padding: 10, borderRadius: 8, marginBottom: 12, fontSize: 12 },

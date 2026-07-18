@@ -293,8 +293,8 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
                 ) : (
                   <TouchableOpacity
                     onPress={confirmarCierre}
-                    disabled={cerrando || pagos.length === 0 || editandoId !== null}
-                    style={[styles.cierreBtn, (cerrando || pagos.length === 0 || editandoId !== null) && styles.cierreBtnDisabled]}
+                    disabled={cerrando || editandoId !== null}
+                    style={[styles.cierreBtn, (cerrando || editandoId !== null) && styles.cierreBtnDisabled]}
                   >
                     <Text style={styles.cierreTexto}>{cerrando ? 'Cerrando...' : 'Cerrar día'}</Text>
                   </TouchableOpacity>

@@ -68,9 +68,12 @@ export default function TurnoQRTab() {
   async function cerrarPendienteSimple(turnoId: number) {
     if (!token) return
     setCerrandoPendiente(true)
+    setErrorDatafonoPendiente('')
     try {
       await postCerrarTurno(token, turnoId)
       setTurnoPendiente(null)
+    } catch (e) {
+      setErrorDatafonoPendiente(e instanceof ApiError ? e.message : 'Error al cerrar turno')
     } finally {
       setCerrandoPendiente(false)
     }
@@ -97,8 +100,13 @@ export default function TurnoQRTab() {
 
   if (turnoPendiente && !turnoHoy) {
     return (
-      <>
-        <TurnoPendienteAviso turno={turnoPendiente} onCerrar={() => cerrarPendiente(turnoPendiente.id)} cerrando={cerrandoPendiente} />
+      <View style={{ flex: 1 }}>
+        <TurnoPendienteAviso
+          turno={turnoPendiente}
+          onCerrar={() => cerrarPendiente(turnoPendiente.id)}
+          cerrando={cerrandoPendiente}
+          error={mostrarDatafonoPendiente ? undefined : errorDatafonoPendiente}
+        />
         <CierreDatafonoModal
           visible={mostrarDatafonoPendiente}
           cerrando={cerrandoPendiente}
@@ -106,7 +114,7 @@ export default function TurnoQRTab() {
           onCancelar={() => setMostrarDatafonoPendiente(false)}
           onConfirmar={cerrarPendienteConDatafono}
         />
-      </>
+      </View>
     )
   }
 

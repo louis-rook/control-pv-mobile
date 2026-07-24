@@ -8,6 +8,14 @@ export class ApiError extends Error {
   }
 }
 
+// Permite que AuthContext se entere de un 401 en cualquier llamada y cierre la
+// sesión automáticamente, en vez de dejar al usuario viendo un error genérico
+// con un token vencido que ya no sirve para nada.
+let onUnauthorized: (() => void) | null = null
+export function setUnauthorizedHandler(fn: (() => void) | null) {
+  onUnauthorized = fn
+}
+
 type FetchOpts = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
   token?: string | null
@@ -34,6 +42,7 @@ export async function apiFetch<T = unknown>(path: string, opts: FetchOpts = {}):
   }
 
   if (!res.ok) {
+    if (res.status === 401) onUnauthorized?.()
     const msg = (data as { error?: string } | null)?.error ?? `Error de red (${res.status})`
     throw new ApiError(msg, res.status)
   }

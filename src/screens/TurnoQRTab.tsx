@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, Alert } from 'react-native'
 import { useAuth } from '../context/AuthContext'
 import { getTurno, postAbrirTurno, postCerrarTurno, type Turno } from '../api/turno'
 import { getPuntosVenta, type PuntoVenta } from '../api/pvn'
@@ -8,6 +8,10 @@ import AbrirTurnoAviso from '../components/AbrirTurnoAviso'
 import TurnoPendienteAviso from '../components/TurnoPendienteAviso'
 import CierreDatafonoModal from '../components/CierreDatafonoModal'
 import PagoQRForm from './PagoQRForm'
+
+function fmtFecha(s: string) {
+  return new Date(s + 'T12:00:00').toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
+}
 
 export default function TurnoQRTab() {
   const { user, token } = useAuth()
@@ -65,12 +69,20 @@ export default function TurnoQRTab() {
     cerrarPendienteSimple(turnoId)
   }
 
+  function avisarCierreFueraDeFecha(turno: Turno) {
+    Alert.alert(
+      'Turno cerrado',
+      `El turno del ${fmtFecha(turno.fecha)} quedó cerrado con fecha de hoy. El turno sigue registrado en su día original.`,
+    )
+  }
+
   async function cerrarPendienteSimple(turnoId: number) {
     if (!token) return
     setCerrandoPendiente(true)
     setErrorDatafonoPendiente('')
     try {
       await postCerrarTurno(token, turnoId)
+      if (turnoPendiente) avisarCierreFueraDeFecha(turnoPendiente)
       setTurnoPendiente(null)
     } catch (e) {
       setErrorDatafonoPendiente(e instanceof ApiError ? e.message : 'Error al cerrar turno')
@@ -85,6 +97,7 @@ export default function TurnoQRTab() {
     setErrorDatafonoPendiente('')
     try {
       await postCerrarTurno(token, turnoPendiente.id, { fotoUri, numeroRecogida })
+      avisarCierreFueraDeFecha(turnoPendiente)
       setTurnoPendiente(null)
       setMostrarDatafonoPendiente(false)
     } catch (e) {

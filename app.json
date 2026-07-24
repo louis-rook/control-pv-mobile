@@ -28,9 +28,6 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
       "package": "com.klarenssorganization.controlpvmobile"
     },
     "web": {
@@ -44,6 +41,14 @@
         {
           "photosPermission": "Se accede a la galería para adjuntar comprobantes de pago QR.",
           "cameraPermission": "Se usa la cámara para fotografiar los comprobantes de pago QR."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "blockedPermissions": ["android.permission.RECORD_AUDIO"]
+          }
         }
       ]
     ],

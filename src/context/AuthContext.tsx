@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { loginMobile } from '../api/auth'
+import { setUnauthorizedHandler } from '../api/client'
 import { saveSession, loadSession, clearSession, type StoredUser } from '../storage/secureStore'
 
 type AuthState = {
@@ -51,6 +52,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null)
     setUser(null)
   }, [])
+
+  // Si cualquier llamada a la API responde 401 (token vencido o invalidado),
+  // se cierra la sesión automáticamente en vez de dejar al usuario viendo un
+  // error genérico sin poder hacer nada.
+  useEffect(() => {
+    setUnauthorizedHandler(() => { logout() })
+    return () => setUnauthorizedHandler(null)
+  }, [logout])
 
   const markPasswordChanged = useCallback(async () => {
     if (!token || !user) return

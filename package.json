@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
-    "expo": "~54.0.0",
+    "expo": "~54.0.36",
     "expo-build-properties": "~1.0.10",
     "expo-constants": "~18.0.13",
     "expo-dev-client": "~6.0.21",

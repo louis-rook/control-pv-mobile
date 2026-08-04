@@ -7,8 +7,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "buildType": "apk",
-        "resourceClass": "medium"
+        "buildType": "apk"
       },
       "env": {
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
@@ -17,8 +16,7 @@
     },
     "preview": {
       "android": {
-        "buildType": "apk",
-        "resourceClass": "medium"
+        "buildType": "apk"
       },
       "env": {
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true",

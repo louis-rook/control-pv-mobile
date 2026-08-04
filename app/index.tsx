@@ -19,5 +19,6 @@ export default function Index() {
   if (user.debe_cambiar_password) return <Redirect href="/cambiar-password" />
   if (user.rol === 'pvn') return <Redirect href="/(app)/pvn-registrar" />
   if (user.rol === 'pvv') return <Redirect href="/(app)/pvv-pago-qr" />
+  if (user.rol === 'usuario' || user.rol === 'admin') return <Redirect href="/(app)/movimiento-foto" />
   return <Redirect href="/login" />
 }

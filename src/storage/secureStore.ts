@@ -6,7 +6,7 @@ const USER_KEY  = 'pvn_pvv_user'
 export type StoredUser = {
   id: string
   name: string
-  rol: 'pvn' | 'pvv'
+  rol: 'pvn' | 'pvv' | 'usuario' | 'admin'
   area: string
   punto_venta_id: number | null
   punto_venta_nombre: string | null

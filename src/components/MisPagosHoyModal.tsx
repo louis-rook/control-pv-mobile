@@ -14,6 +14,9 @@ function fmtMoneda(v: number) {
 function fmtHora(s: string) {
   return new Date(s).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
 }
+function fmtFecha(s: string) {
+  return new Date(s).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' })
+}
 
 type Props = {
   visible: boolean
@@ -177,7 +180,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
         <View style={styles.header}>
           <View>
             <Text style={styles.titulo}>
-              {mostrarListaTurnos ? 'Turnos de hoy' : verTurnoId ? 'Turno anterior' : 'Mis pagos de hoy'}
+              {mostrarListaTurnos ? 'Últimos turnos' : verTurnoId ? 'Turno anterior' : 'Mis pagos de hoy'}
             </Text>
             {!mostrarListaTurnos && verTurnoId && turnoActual && (
               <Text style={styles.subtitulo}>🔒 {turnoActual.punto_venta_nombre} · solo lectura</Text>
@@ -196,7 +199,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={() => { setMostrarListaTurnos(true); cargarTurnosHist() }}>
-                <Text style={styles.link}>🕐 Turnos anteriores de hoy</Text>
+                <Text style={styles.link}>🕐 Turnos anteriores</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -216,7 +219,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
                   <View>
                     <Text style={styles.filaTurnoNombre}>{item.punto_venta_nombre}</Text>
                     <Text style={styles.filaTurnoHora}>
-                      {fmtHora(item.abierto_at)} – {item.cerrado_at ? fmtHora(item.cerrado_at) : (item.activo ? 'en curso' : '—')}
+                      {fmtFecha(item.abierto_at)} · {fmtHora(item.abierto_at)} – {item.cerrado_at ? fmtHora(item.cerrado_at) : (item.activo ? 'en curso' : '—')}
                     </Text>
                   </View>
                   <Text style={styles.filaTurnoFlecha}>›</Text>

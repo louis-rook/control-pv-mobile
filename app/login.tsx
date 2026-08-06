@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingVi
 import { Redirect } from 'expo-router'
 import { useAuth } from '../src/context/AuthContext'
 import { COLORS } from '../src/theme'
+import { homeRoute } from '../src/utils/homeRoute'
 
 export default function LoginScreen() {
   const { user, login } = useAuth()
@@ -13,8 +14,7 @@ export default function LoginScreen() {
 
   if (user) {
     if (user.debe_cambiar_password) return <Redirect href="/cambiar-password" />
-    if (user.rol === 'pvn') return <Redirect href="/(app)/pvn-registrar" />
-    if (user.rol === 'pvv') return <Redirect href="/(app)/pvv-pago-qr" />
+    return <Redirect href={homeRoute(user.rol) as never} />
   }
 
   async function onSubmit() {

@@ -5,6 +5,7 @@ import { useAuth } from '../src/context/AuthContext'
 import { cambiarPassword } from '../src/api/auth'
 import { ApiError } from '../src/api/client'
 import { COLORS } from '../src/theme'
+import { homeRoute } from '../src/utils/homeRoute'
 
 export default function CambiarPasswordScreen() {
   const { user, token, markPasswordChanged } = useAuth()
@@ -18,7 +19,7 @@ export default function CambiarPasswordScreen() {
 
   if (!user || !token) return <Redirect href="/login" />
   if (!user.debe_cambiar_password) {
-    return <Redirect href={user.rol === 'pvn' ? '/(app)/pvn-registrar' : '/(app)/pvv-pago-qr'} />
+    return <Redirect href={homeRoute(user.rol)} />
   }
 
   async function onSubmit() {
@@ -30,7 +31,7 @@ export default function CambiarPasswordScreen() {
     try {
       await cambiarPassword(token!, nueva)
       await markPasswordChanged()
-      router.replace(user!.rol === 'pvn' ? '/(app)/pvn-registrar' : '/(app)/pvv-pago-qr')
+      router.replace(homeRoute(user!.rol) as never)
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'Error al cambiar la contraseña')
     } finally {

@@ -3,6 +3,7 @@ import { View, ActivityIndicator } from 'react-native'
 import { Redirect } from 'expo-router'
 import { useAuth } from '../src/context/AuthContext'
 import { COLORS } from '../src/theme'
+import { homeRoute } from '../src/utils/homeRoute'
 
 export default function Index() {
   const { user, loading } = useAuth()
@@ -17,8 +18,5 @@ export default function Index() {
 
   if (!user) return <Redirect href="/login" />
   if (user.debe_cambiar_password) return <Redirect href="/cambiar-password" />
-  if (user.rol === 'pvn') return <Redirect href="/(app)/pvn-registrar" />
-  if (user.rol === 'pvv') return <Redirect href="/(app)/pvv-pago-qr" />
-  if (user.rol === 'usuario' || user.rol === 'admin') return <Redirect href="/(app)/movimiento-foto" />
-  return <Redirect href="/login" />
+  return <Redirect href={homeRoute(user.rol) as never} />
 }

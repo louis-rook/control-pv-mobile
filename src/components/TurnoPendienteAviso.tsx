@@ -6,9 +6,15 @@ function fmtFecha(s: string) {
   return new Date(s + 'T12:00:00').toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
 }
 
-type Props = { turno: Turno; onCerrar: () => void; cerrando: boolean; error?: string }
+type Props = {
+  turno: Turno
+  onCerrar: () => void
+  cerrando: boolean
+  error?: string
+  onPreguntarQR: () => void
+}
 
-export default function TurnoPendienteAviso({ turno, onCerrar, cerrando, error }: Props) {
+export default function TurnoPendienteAviso({ turno, onCerrar, cerrando, error, onPreguntarQR }: Props) {
   return (
     <View style={styles.center}>
       <Text style={styles.emoji}>⚠️</Text>
@@ -17,6 +23,11 @@ export default function TurnoPendienteAviso({ turno, onCerrar, cerrando, error }
       <Text style={styles.fecha}>{fmtFecha(turno.fecha)}</Text>
       <Text style={styles.punto}>Punto: <Text style={styles.puntoBold}>{turno.punto_venta_nombre}</Text></Text>
       {error ? <Text style={styles.error}>{error}</Text> : null}
+
+      <TouchableOpacity onPress={onPreguntarQR} disabled={cerrando} style={styles.btnPregunta}>
+        <Text style={styles.btnPreguntaTexto}>❓ ¿Tienes ventas QR de ese turno sin subir?</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity onPress={onCerrar} disabled={cerrando} style={[styles.btn, cerrando && styles.btnDisabled]}>
         <Text style={styles.btnTexto}>{cerrando ? 'Cerrando...' : '⏹ Cerrar turno pendiente'}</Text>
       </TouchableOpacity>
@@ -33,6 +44,8 @@ const styles = StyleSheet.create({
   punto: { fontSize: 13, color: '#64748b', marginBottom: 24 },
   puntoBold: { fontWeight: '700', color: '#334155' },
   error: { backgroundColor: '#fee2e2', color: '#991b1b', padding: 10, borderRadius: 8, marginBottom: 16, fontSize: 12, width: '100%', textAlign: 'center' },
+  btnPregunta: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 10, paddingVertical: 12, paddingHorizontal: 20, width: '100%', alignItems: 'center', marginBottom: 12 },
+  btnPreguntaTexto: { color: '#334155', fontWeight: '700', fontSize: 13 },
   btn: { backgroundColor: '#dc2626', borderRadius: 10, paddingVertical: 14, paddingHorizontal: 32, width: '100%', alignItems: 'center' },
   btnDisabled: { opacity: 0.7 },
   btnTexto: { color: '#fff', fontWeight: '700', fontSize: 15 },

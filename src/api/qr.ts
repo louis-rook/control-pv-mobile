@@ -26,6 +26,7 @@ export async function postPagoQR(token: string, params: {
   fotoUri: string
   valor: number
   puntoVentaId?: number | null
+  turnoId?: number
 }) {
   const form = new FormData()
   const filename = params.fotoUri.split('/').pop() ?? 'comprobante.jpg'
@@ -40,6 +41,9 @@ export async function postPagoQR(token: string, params: {
   } as unknown as Blob)
   form.append('valor', String(params.valor))
   if (params.puntoVentaId) form.append('punto_venta_id', String(params.puntoVentaId))
+  // Carga tardía de QR de un turno pendiente (de un día anterior) antes de
+  // cerrarlo — sin esto, el backend siempre asocia el pago al turno de hoy.
+  if (params.turnoId) form.append('turno_id', String(params.turnoId))
 
   return apiFetch<PagoQR>('/api/qr/pagos', { method: 'POST', token, formData: form })
 }

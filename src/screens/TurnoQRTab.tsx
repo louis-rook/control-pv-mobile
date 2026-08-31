@@ -7,6 +7,8 @@ import { ApiError } from '../api/client'
 import AbrirTurnoAviso from '../components/AbrirTurnoAviso'
 import TurnoPendienteAviso from '../components/TurnoPendienteAviso'
 import CierreDatafonoModal from '../components/CierreDatafonoModal'
+import CantidadQRModal from '../components/CantidadQRModal'
+import CargarQRPendienteForm from '../components/CargarQRPendienteForm'
 import PagoQRForm from './PagoQRForm'
 
 function fmtFecha(s: string) {
@@ -27,6 +29,13 @@ export default function TurnoQRTab() {
   const [error, setError]                 = useState('')
   const [mostrarDatafonoPendiente, setMostrarDatafonoPendiente] = useState(false)
   const [errorDatafonoPendiente, setErrorDatafonoPendiente]     = useState('')
+
+  // Carga tardía de QR del turno pendiente: primero se pregunta la cantidad,
+  // luego se exige registrar exactamente esa cantidad (ni más, para no dejar
+  // colar ventas del turno nuevo) antes de poder continuar con el cierre.
+  const [mostrarCantidadQR, setMostrarCantidadQR] = useState(false)
+  const [cantidadQRPendientes, setCantidadQRPendientes] = useState<number | null>(null)
+  const [qrPendientesCargados, setQrPendientesCargados] = useState(0)
 
   const cargarTurno = useCallback(() => {
     if (!token) return
@@ -84,6 +93,7 @@ export default function TurnoQRTab() {
       await postCerrarTurno(token, turnoId)
       if (turnoPendiente) avisarCierreFueraDeFecha(turnoPendiente)
       setTurnoPendiente(null)
+      setCantidadQRPendientes(null); setQrPendientesCargados(0)
     } catch (e) {
       setErrorDatafonoPendiente(e instanceof ApiError ? e.message : 'Error al cerrar turno')
     } finally {
@@ -100,6 +110,7 @@ export default function TurnoQRTab() {
       avisarCierreFueraDeFecha(turnoPendiente)
       setTurnoPendiente(null)
       setMostrarDatafonoPendiente(false)
+      setCantidadQRPendientes(null); setQrPendientesCargados(0)
     } catch (e) {
       setErrorDatafonoPendiente(e instanceof ApiError ? e.message : 'Error al cerrar turno')
     } finally {
@@ -112,6 +123,22 @@ export default function TurnoQRTab() {
   }
 
   if (turnoPendiente && !turnoHoy) {
+    // Fase 2: ya dijo cuántos QR pendientes tiene y todavía le faltan por
+    // subir — solo puede registrar esa cantidad exacta, del turno anterior.
+    if (cantidadQRPendientes !== null && qrPendientesCargados < cantidadQRPendientes) {
+      return (
+        <CargarQRPendienteForm
+          turno={turnoPendiente}
+          numero={qrPendientesCargados + 1}
+          total={cantidadQRPendientes}
+          onRegistrado={() => setQrPendientesCargados(n => n + 1)}
+          onCancelarTanda={() => { setCantidadQRPendientes(null); setQrPendientesCargados(0) }}
+        />
+      )
+    }
+
+    // Fase 1 (o Fase 3, ya con los pendientes al día): aviso normal de turno
+    // pendiente, con la opción de declarar QR pendientes antes de cerrar.
     return (
       <View style={{ flex: 1 }}>
         <TurnoPendienteAviso
@@ -119,6 +146,25 @@ export default function TurnoQRTab() {
           onCerrar={() => cerrarPendiente(turnoPendiente.id)}
           cerrando={cerrandoPendiente}
           error={mostrarDatafonoPendiente ? undefined : errorDatafonoPendiente}
+          onPreguntarQR={() => {
+            Alert.alert(
+              'Ventas QR pendientes',
+              '¿Tienes pagos QR de ese turno que no alcanzaste a subir?',
+              [
+                { text: 'No tengo pendientes', style: 'cancel' },
+                { text: 'Sí, tengo pendientes', onPress: () => setMostrarCantidadQR(true) },
+              ],
+            )
+          }}
+        />
+        <CantidadQRModal
+          visible={mostrarCantidadQR}
+          onCancelar={() => setMostrarCantidadQR(false)}
+          onConfirmar={(n) => {
+            setCantidadQRPendientes(n)
+            setQrPendientesCargados(0)
+            setMostrarCantidadQR(false)
+          }}
         />
         <CierreDatafonoModal
           visible={mostrarDatafonoPendiente}

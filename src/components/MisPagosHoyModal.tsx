@@ -183,7 +183,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
               {mostrarListaTurnos ? 'Últimos turnos' : verTurnoId ? 'Turno anterior' : 'Mis pagos de hoy'}
             </Text>
             {!mostrarListaTurnos && verTurnoId && turnoActual && (
-              <Text style={styles.subtitulo}>🔒 {turnoActual.punto_venta_nombre} · solo lectura</Text>
+              <Text style={styles.subtitulo}>🔒 {turnoActual.punto_venta_nombre} · {fmtFecha(turnoActual.abierto_at)} · solo lectura</Text>
             )}
           </View>
           <TouchableOpacity onPress={cerrarPanel} style={styles.cerrarBtn}>
@@ -213,7 +213,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
               data={turnosHist}
               keyExtractor={t => String(t.id)}
               contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
-              ListEmptyComponent={<Text style={styles.vacio}>Sin turnos hoy</Text>}
+              ListEmptyComponent={<Text style={styles.vacio}>Sin turnos anteriores</Text>}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => verTurnoAnterior(item)} style={styles.filaTurno}>
                   <View>

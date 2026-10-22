@@ -7,6 +7,11 @@ import { postCerrarTurno, getTurnosHistorialHoy, type TurnoHist } from '../api/t
 import { ApiError } from '../api/client'
 import CierreDatafonoModal from './CierreDatafonoModal'
 import { COLORS } from '../theme'
+import { parseValorPesos } from '../utils/valor'
+
+function mensajeError(e: unknown, porDefecto: string) {
+  return e instanceof ApiError ? e.message : porDefecto
+}
 
 function fmtMoneda(v: number) {
   return `$${Math.round(v).toLocaleString('es-CO')}`
@@ -48,7 +53,10 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
   const cargarPagos = React.useCallback((turnoId?: number | null) => {
     if (!token) return
     setCargando(true)
-    getMisPagosHoy(token, turnoId ?? undefined).then(setPagos).finally(() => setCargando(false))
+    getMisPagosHoy(token, turnoId ?? undefined)
+      .then(setPagos)
+      .catch(e => Alert.alert('No se pudieron cargar los pagos', mensajeError(e, 'Revisa tu conexión e intenta de nuevo')))
+      .finally(() => setCargando(false))
   }, [token])
 
   useEffect(() => {
@@ -64,7 +72,10 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
   function cargarTurnosHist() {
     if (!token) return
     setCargandoTurnosHist(true)
-    getTurnosHistorialHoy(token).then(setTurnosHist).finally(() => setCargandoTurnosHist(false))
+    getTurnosHistorialHoy(token)
+      .then(setTurnosHist)
+      .catch(e => Alert.alert('No se pudieron cargar los turnos', mensajeError(e, 'Revisa tu conexión e intenta de nuevo')))
+      .finally(() => setCargandoTurnosHist(false))
   }
 
   function verTurnoActual() {
@@ -101,6 +112,8 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
             try {
               await postCerrarTurno(token)
               setCerrado(true)
+            } catch (e) {
+              Alert.alert('No se pudo cerrar el día', mensajeError(e, 'Revisa tu conexión e intenta de nuevo'))
             } finally {
               setCerrando(false)
             }
@@ -132,13 +145,15 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
 
   async function guardarEdicion(id: number) {
     if (!token) return
-    const valorNum = parseFloat(valorEdit.replace(/[^\d.]/g, ''))
-    if (!valorNum || valorNum <= 0) return
+    const valorNum = parseValorPesos(valorEdit)
+    if (valorNum === null) { Alert.alert('Valor inválido', 'Ingresa un valor mayor que cero'); return }
     setGuardandoEdit(true)
     try {
       await putPagoQR(token, id, valorNum)
       setEditandoId(null)
       cargarPagos(verTurnoId)
+    } catch (e) {
+      Alert.alert('No se pudo editar el pago', mensajeError(e, 'Revisa tu conexión e intenta de nuevo'))
     } finally {
       setGuardandoEdit(false)
     }
@@ -156,6 +171,8 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
           try {
             await deletePagoQR(token, id)
             cargarPagos(verTurnoId)
+          } catch (e) {
+            Alert.alert('No se pudo eliminar el pago', mensajeError(e, 'Revisa tu conexión e intenta de nuevo'))
           } finally {
             setEliminandoId(null)
           }

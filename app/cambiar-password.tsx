@@ -24,7 +24,8 @@ export default function CambiarPasswordScreen() {
 
   async function onSubmit() {
     setError('')
-    if (nueva.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); return }
+    // Mismo mínimo que exige /api/cambiar-password (AUD-18 de la auditoría web)
+    if (nueva.length < 8) { setError('La contraseña debe tener al menos 8 caracteres'); return }
     if (nueva !== confirmar) { setError('Las contraseñas no coinciden'); return }
 
     setGuardando(true)
@@ -52,7 +53,7 @@ export default function CambiarPasswordScreen() {
           <Text style={styles.label}>NUEVA CONTRASEÑA</Text>
           <View style={styles.inputWrap}>
             <TextInput
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Mínimo 8 caracteres"
               placeholderTextColor="#94a3b8"
               secureTextEntry={!verNueva}
               value={nueva}

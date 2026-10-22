@@ -5,6 +5,7 @@ import { postPagoQR } from '../api/qr'
 import { ApiError } from '../api/client'
 import FotoComprobante from '../components/FotoComprobante'
 import MisPagosHoyModal from '../components/MisPagosHoyModal'
+import { parseValorPesos, formatoPesos } from '../utils/valor'
 
 type Props = {
   puntoVentaId?: number | null
@@ -38,8 +39,8 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onTurnoCerrado }
     setError(''); setExito('')
 
     if (!foto) { setError('Toma o adjunta la foto del comprobante'); return }
-    const valorNum = parseFloat(valor.replace(/[^\d.]/g, ''))
-    if (!valorNum || valorNum <= 0) { setError('Ingresa un valor válido'); return }
+    const valorNum = parseValorPesos(valor)
+    if (valorNum === null) { setError('Ingresa un valor válido'); return }
 
     setGuardando(true)
     try {
@@ -93,6 +94,9 @@ export default function PagoQRForm({ puntoVentaId, puntoNombre, onTurnoCerrado }
           placeholder="Ej: 25000"
           style={styles.input}
         />
+        {parseValorPesos(valor) !== null && (
+          <Text style={styles.confirmaValor}>Se registrará: {formatoPesos(parseValorPesos(valor)!)}</Text>
+        )}
       </View>
 
       <TouchableOpacity onPress={enviar} disabled={guardando} style={[styles.guardarBtn, guardando && styles.guardarBtnDisabled]}>
@@ -114,6 +118,7 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 14, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 },
   label: { fontSize: 12, fontWeight: '700', color: '#475569', marginBottom: 10 },
   input: { borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 12, fontSize: 18, fontWeight: '700', color: '#0f172a' },
+  confirmaValor: { marginTop: 8, fontSize: 13, fontWeight: '700', color: '#0047BA' },
   guardarBtn: { backgroundColor: '#0047BA', borderRadius: 10, paddingVertical: 15, alignItems: 'center' },
   guardarBtnDisabled: { opacity: 0.6 },
   guardarTexto: { color: '#fff', fontWeight: '700', fontSize: 15 },

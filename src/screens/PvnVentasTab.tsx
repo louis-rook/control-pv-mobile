@@ -38,7 +38,9 @@ export default function PvnVentasTab() {
       const init: Record<number, number> = {}
       data.forEach(p => { init[p.id] = 0 })
       setCantidades(init)
-    }).finally(() => setCargando(false))
+    })
+      .catch(e => setError(e instanceof ApiError ? e.message : 'No se pudo cargar el catálogo de productos'))
+      .finally(() => setCargando(false))
   }, [token])
 
   function setQty(id: number, v: number) {

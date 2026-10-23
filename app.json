@@ -3,15 +3,10 @@
     "name": "Control PV",
     "slug": "control-pv-mobile",
     "scheme": "pvnpvv",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -48,10 +43,22 @@
         "expo-build-properties",
         {
           "android": {
-            "blockedPermissions": ["android.permission.RECORD_AUDIO"]
+            "blockedPermissions": [
+              "android.permission.RECORD_AUDIO"
+            ]
           }
         }
-      ]
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "imageWidth": 200
+        }
+      ],
+      "expo-status-bar"
     ],
     "extra": {
       "router": {},

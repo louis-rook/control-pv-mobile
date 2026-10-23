@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, type ComponentRef } from 'react'
 import { Keyboard, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native'
 import { useAuth } from '../context/AuthContext'
 import { postPagoQR } from '../api/qr'
@@ -15,7 +15,7 @@ type Props = {
 
 export default function PagoQRForm({ puntoVentaId, puntoNombre, onTurnoCerrado }: Props) {
   const { token } = useAuth()
-  const scrollRef = useRef<ScrollView>(null)
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null) // desde RN 0.82 ScrollView es un componente función: el tipo del ref es su instancia
   const [kbHeight, setKbHeight] = useState(0)
 
   useEffect(() => {

@@ -69,3 +69,11 @@ Consecuencias:
 - `npx tsc --noEmit`: 0 errores.
 - `parseValorPesos` probado con «25000», «25.000», «25,000», «$ 25.000», «1.250.000», «253.000», «12.500,50», «1500.5», vacío y texto: todos correctos.
 - APK: build `preview` en EAS (ver el enlace del build). Pruebas en el teléfono pendientes: login, cambio de contraseña obligatorio, abrir turno, registrar un pago escribiendo «25.000» (debe mostrar y guardar $25.000), mis pagos de hoy con fotos, cerrar turno y foto de movimiento TIC.
+
+## Actualización a Expo SDK 58 (23/10/2026, versión 1.2.0)
+
+- Expo 54 → 58 (React Native 0.81 → 0.88, React 19.1 → 19.3) con `npx expo install expo@^58` y `npx expo install --fix`.
+- Ajustes: el ref de `ScrollView` se tipa con `ComponentRef<typeof ScrollView>` (desde RN 0.82 es un componente función) en `CierreDatafonoModal` y `PagoQRForm`; la configuración del splash pasa de la raíz de `app.json` al plugin `expo-splash-screen`.
+- Alertas de `npm audit --omit=dev`: 41 → 17 (las restantes son de herramientas de compilación, no van en el APK).
+- Verificado: `npx tsc --noEmit` sin errores, `expo-doctor` 20/20, bundle Android con `expo export`, build `preview` en EAS (misma firma; versionCode sin cambiar, así que se puede reinstalar la 1.1.0 encima).
+- Probado en teléfono el 23/10/2026: login, abrir turno, pago QR con cámara y con galería, cierre de datáfono, historial y cierre de turno.

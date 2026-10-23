@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, type ComponentRef } from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Keyboard, BackHandler, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import FotoComprobante from './FotoComprobante'
@@ -22,7 +22,7 @@ export default function CierreDatafonoModal({ visible, cerrando, error, onCancel
   const [numero, setNumero] = useState('')
   const [errorLocal, setErrorLocal] = useState('')
   const [kbHeight, setKbHeight] = useState(0)
-  const scrollRef = useRef<ScrollView>(null)
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null) // desde RN 0.82 ScrollView es un componente función: el tipo del ref es su instancia
   const { height: screenHeight } = useWindowDimensions()
   const insets = useSafeAreaInsets()
 

@@ -2,9 +2,12 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000'
 
 export class ApiError extends Error {
   status: number
-  constructor(message: string, status: number) {
+  /** Cuerpo completo de la respuesta de error (p. ej. requiere2fa en el login) */
+  datos: Record<string, unknown> | null
+  constructor(message: string, status: number, datos: Record<string, unknown> | null = null) {
     super(message)
     this.status = status
+    this.datos = datos
   }
 }
 
@@ -44,7 +47,7 @@ export async function apiFetch<T = unknown>(path: string, opts: FetchOpts = {}):
   if (!res.ok) {
     if (res.status === 401) onUnauthorized?.()
     const msg = (data as { error?: string } | null)?.error ?? `Error de red (${res.status})`
-    throw new ApiError(msg, res.status)
+    throw new ApiError(msg, res.status, (data as Record<string, unknown> | null) ?? null)
   }
 
   return data as T

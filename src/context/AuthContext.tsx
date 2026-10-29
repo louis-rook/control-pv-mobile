@@ -8,7 +8,7 @@ type AuthState = {
   token: string | null
   loading: boolean
   error: string | null
-  login: (username: string, password: string) => Promise<void>
+  login: (username: string, password: string, codigo?: string) => Promise<void>
   logout: () => Promise<void>
   markPasswordChanged: () => Promise<void>
 }
@@ -31,11 +31,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  const login = useCallback(async (username: string, password: string) => {
+  const login = useCallback(async (username: string, password: string, codigo?: string) => {
     setError(null)
     setLoading(true)
     try {
-      const { token: newToken, user: newUser } = await loginMobile(username, password)
+      const { token: newToken, user: newUser } = await loginMobile(username, password, codigo)
       await saveSession(newToken, newUser)
       setToken(newToken)
       setUser(newUser)

@@ -4,6 +4,7 @@ import { Redirect } from 'expo-router'
 import { useAuth } from '../src/context/AuthContext'
 import { COLORS } from '../src/theme'
 import { homeRoute } from '../src/utils/homeRoute'
+import { ApiError } from '../src/api/client'
 
 export default function LoginScreen() {
   const { user, login } = useAuth()
@@ -11,6 +12,9 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('')
   const [error, setError]       = useState('')
   const [submitting, setSubmitting] = useState(false)
+  // Administradores con verificación en dos pasos: el servidor pide el código y aparece el tercer campo
+  const [pideCodigo, setPideCodigo] = useState(false)
+  const [codigo, setCodigo] = useState('')
 
   if (user) {
     if (user.debe_cambiar_password) return <Redirect href="/cambiar-password" />
@@ -23,10 +27,20 @@ export default function LoginScreen() {
       setError('Usuario y contraseña requeridos')
       return
     }
+    if (pideCodigo && !codigo.trim()) {
+      setError('Ingresa el código de verificación')
+      return
+    }
     setSubmitting(true)
     try {
-      await login(username.trim(), password)
+      await login(username.trim(), password, pideCodigo ? codigo.trim() : undefined)
     } catch (e) {
+      if (e instanceof ApiError && e.datos?.requiere2fa) {
+        // Contraseña correcta: falta (o no sirvió) el código. Si es la primera vez, no es un error.
+        if (pideCodigo) setError(e.message)
+        setPideCodigo(true)
+        return
+      }
       setError(e instanceof Error ? e.message : 'Error al iniciar sesión')
     } finally {
       setSubmitting(false)
@@ -67,8 +81,26 @@ export default function LoginScreen() {
             onSubmitEditing={onSubmit}
           />
 
+          {pideCodigo && (
+            <>
+              <Text style={styles.label}>CÓDIGO DE VERIFICACIÓN</Text>
+              <TextInput
+                placeholder="123456"
+                placeholderTextColor="#94a3b8"
+                autoCapitalize="characters"
+                autoCorrect={false}
+                autoFocus
+                value={codigo}
+                onChangeText={setCodigo}
+                style={[styles.input, styles.inputCodigo]}
+                onSubmitEditing={onSubmit}
+              />
+              <Text style={styles.ayuda}>Los 6 dígitos de tu app autenticadora. Sin el celular, usa un código de recuperación (XXXX-XXXX).</Text>
+            </>
+          )}
+
           <TouchableOpacity onPress={onSubmit} disabled={submitting} style={[styles.btn, submitting && styles.btnDisabled]}>
-            <Text style={styles.btnTexto}>{submitting ? 'Validando credenciales...' : 'Ingresar al Sistema'}</Text>
+            <Text style={styles.btnTexto}>{submitting ? 'Validando credenciales...' : pideCodigo ? 'Verificar e ingresar' : 'Ingresar al Sistema'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -98,6 +130,8 @@ const styles = StyleSheet.create({
   error: { backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FCA5A5', color: COLORS.danger, fontSize: 13, fontWeight: '700', textAlign: 'center', borderRadius: 10, padding: 12, marginBottom: 16 },
   label: { fontSize: 11, fontWeight: '700', color: COLORS.text2, letterSpacing: 0.5, marginBottom: 8, marginTop: 14 },
   input: { borderWidth: 1, borderColor: COLORS.border, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 13, fontSize: 15, color: COLORS.text, backgroundColor: '#fff' },
+  inputCodigo: { fontSize: 20, letterSpacing: 4, textAlign: 'center' },
+  ayuda: { fontSize: 12, color: COLORS.text2, marginTop: 6 },
   btn: { backgroundColor: COLORS.accent, borderRadius: 10, paddingVertical: 16, alignItems: 'center', marginTop: 22, shadowColor: COLORS.accent, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 },
   btnDisabled: { opacity: 0.6 },
   btnTexto: { color: '#fff', fontWeight: '700', fontSize: 16 },

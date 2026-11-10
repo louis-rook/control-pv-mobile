@@ -3,7 +3,7 @@ import { View, ActivityIndicator, Alert } from 'react-native'
 import { useAuth } from '../context/AuthContext'
 import { getTurno, postAbrirTurno, postCerrarTurno, type Turno } from '../api/turno'
 import { getPuntosVenta, type PuntoVenta } from '../api/pvn'
-import { ApiError } from '../api/client'
+import { ApiError, mensajeError } from '../api/client'
 import AbrirTurnoAviso from '../components/AbrirTurnoAviso'
 import TurnoPendienteAviso from '../components/TurnoPendienteAviso'
 import CierreDatafonoModal from '../components/CierreDatafonoModal'
@@ -95,7 +95,7 @@ export default function TurnoQRTab() {
       setTurnoPendiente(null)
       setCantidadQRPendientes(null); setQrPendientesCargados(0)
     } catch (e) {
-      setErrorDatafonoPendiente(e instanceof ApiError ? e.message : 'Error al cerrar turno')
+      setErrorDatafonoPendiente(mensajeError(e, 'Error al cerrar turno'))
     } finally {
       setCerrandoPendiente(false)
     }
@@ -112,7 +112,7 @@ export default function TurnoQRTab() {
       setMostrarDatafonoPendiente(false)
       setCantidadQRPendientes(null); setQrPendientesCargados(0)
     } catch (e) {
-      setErrorDatafonoPendiente(e instanceof ApiError ? e.message : 'Error al cerrar turno')
+      setErrorDatafonoPendiente(mensajeError(e, 'Error al cerrar turno'))
     } finally {
       setCerrandoPendiente(false)
     }

@@ -4,14 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuth } from '../context/AuthContext'
 import { getMisPagosHoy, putPagoQR, deletePagoQR, type PagoQR } from '../api/qr'
 import { postCerrarTurno, getTurnosHistorialHoy, type TurnoHist } from '../api/turno'
-import { ApiError } from '../api/client'
+import { mensajeError } from '../api/client'
 import CierreDatafonoModal from './CierreDatafonoModal'
 import { COLORS } from '../theme'
 import { parseValorPesos } from '../utils/valor'
-
-function mensajeError(e: unknown, porDefecto: string) {
-  return e instanceof ApiError ? e.message : porDefecto
-}
 
 function fmtMoneda(v: number) {
   return `$${Math.round(v).toLocaleString('es-CO')}`
@@ -132,7 +128,7 @@ export default function MisPagosHoyModal({ visible, onClose, onCerrado }: Props)
       setCerrado(true)
       setMostrarDatafono(false)
     } catch (e) {
-      setErrorDatafono(e instanceof ApiError ? e.message : 'Error al cerrar turno')
+      setErrorDatafono(mensajeError(e, 'Error al cerrar turno'))
     } finally {
       setCerrando(false)
     }

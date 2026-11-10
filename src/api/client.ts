@@ -11,6 +11,20 @@ export class ApiError extends Error {
   }
 }
 
+// Mensaje para mostrar al usuario a partir de cualquier error de apiFetch. Si el
+// servidor respondió, se usa su mensaje; si la petición ni siquiera obtuvo
+// respuesta (fetch rechazado: sin internet, wifi sin salida, conexión cortada
+// a mitad de la subida de la foto), se dice eso explícitamente en vez de un
+// texto genérico que no permite saber qué pasó.
+export function mensajeError(e: unknown, porDefecto: string): string {
+  if (e instanceof ApiError) return e.message
+  const detalle = e instanceof Error ? e.message : String(e ?? '')
+  if (/network request failed|failed to fetch|network|timeout|aborted/i.test(detalle)) {
+    return 'No hubo respuesta del servidor (conexión perdida o sin internet). Revisa la conexión del celular e intenta de nuevo.'
+  }
+  return detalle ? `${porDefecto}: ${detalle}` : porDefecto
+}
+
 // Permite que AuthContext se entere de un 401 en cualquier llamada y cierre la
 // sesión automáticamente, en vez de dejar al usuario viendo un error genérico
 // con un token vencido que ya no sirve para nada.
